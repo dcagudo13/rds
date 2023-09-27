@@ -1,0 +1,39 @@
+name: terraform-destroy
+on:
+  workflow_dispatch:
+    inputs:
+      rds_deployment:
+        description: 'Choose the RDS deployment option.'
+        required: true
+        default: ''
+        type: choice
+        options:
+          - test-module
+          - single-az-instance
+          - multi-az-instance
+          - multi-az-db-cluster
+      apply_changes:
+        description: 'Destroy all resources in AWS?'
+        required: true
+        default: FALSE
+        type: boolean
+env:
+# Credentials for deployment to AWS
+ AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
+ AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_KEY }}
+jobs:
+  terraform-destroy:
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: ./${{inputs.rds_deployment}}
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v1
+      - name: check terraform version
+        run: terraform -v
+      - name: run terraform init
+        run: terraform init
+      - name: run terraform destroy
+        if: inputs.apply_changes == TRUE
+        run: terraform destroy -auto-approve
