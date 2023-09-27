@@ -15,11 +15,8 @@ on:
       apply_changes:
         description: 'Apply changes to AWS?'
         required: true
-        default: 'YES'
-        type: choice
-        options:
-          - NO
-          - YES
+        default: FALSE
+        type: boolean
 env:
 # Credentials for deployment to AWS
  AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
@@ -42,5 +39,5 @@ jobs:
       - name: run terraform plan
         run: terraform plan
       - name: run terraform apply
-        if: ${{inputs.apply_changes}} == 'YES'
+        if: inputs.apply_changes == TRUE
         run: terraform apply -auto-approve
