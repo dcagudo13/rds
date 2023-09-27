@@ -15,7 +15,7 @@ on:
       destroy_all:
         description: 'Destroy all resources in AWS?'
         required: true
-        default: FALSE
+        default: false
         type: boolean
 env:
 # Credentials for deployment to AWS
@@ -30,10 +30,13 @@ jobs:
     steps:
       - name: checkout repo
         uses: actions/checkout@v1
+        
       - name: check terraform version
         run: terraform -v
+        
       - name: run terraform init
         run: terraform init
+        
       - name: run terraform destroy
-        if: inputs.destroy_all == TRUE
+        if: ${{ github.event.inputs.destroy_all == 'true' }}
         run: terraform destroy -auto-approve
