@@ -12,6 +12,14 @@ on:
           - single-az-instance
           - multi-az-instance
           - multi-az-db-cluster
+      apply_changes:
+        description: 'Apply changes to AWS?'
+        required: true
+        default: 'YES'
+        type: choice
+        options:
+          - NO
+          - YES
 env:
 # Credentials for deployment to AWS
  AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
@@ -25,11 +33,14 @@ jobs:
     steps:
       - name: checkout repo
         uses: actions/checkout@v1
-      - name: version
+      - name: check terraform version
         run: terraform -v
-      - name: initialize
+      - name: run terraform init
         run: terraform init
-      - name: validate
+      - name: run terraform validate
         run: terraform validate
-      - name: plan
+      - name: run terraform plan
         run: terraform plan
+      - name: run terraform apply
+        if: ${{inputs.apply_changes}} == 'YES'
+        run: terraform apply -auto-approve
