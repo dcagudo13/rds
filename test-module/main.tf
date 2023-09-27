@@ -5,6 +5,11 @@ terraform {
       version = "5.17.0"
     }
   }
+  backend "s3" {
+    bucket = "terraform-state-20230927"
+    key    = "test-module"
+    region = "ap-southeast-1"
+  }
 }
 
 provider "aws" {
