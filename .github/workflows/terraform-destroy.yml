@@ -23,6 +23,7 @@ env:
  AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_KEY }}
 jobs:
   terraform-destroy:
+    if: ${{ github.event.inputs.destroy_all == 'true' }}
     runs-on: self-hosted
     defaults:
       run:
@@ -38,5 +39,4 @@ jobs:
         run: terraform init
         
       - name: run terraform destroy
-        if: ${{ github.event.inputs.destroy_all == 'true' }}
         run: terraform destroy -auto-approve
