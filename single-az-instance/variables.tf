@@ -58,13 +58,3 @@ data "aws_subnet" "subnet_id_b" {
     values = ["GitOps-Private-B"]
   }
 }
-
-variable "short_id" {
-  type = string
-  default = "1465"
-}
-
-variable "vitesco_cidr" {
-  description = "Vitesco network CIDR blocks"
-  default     = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
-}
