@@ -15,7 +15,7 @@ on:
       apply_changes:
         description: 'Apply changes to AWS?'
         required: true
-        default: FALSE
+        default: false
         type: boolean
 env:
 # Credentials for deployment to AWS
@@ -30,14 +30,19 @@ jobs:
     steps:
       - name: checkout repo
         uses: actions/checkout@v1
+        
       - name: check terraform version
         run: terraform -v
+        
       - name: run terraform init
         run: terraform init
+        
       - name: run terraform validate
         run: terraform validate
+        
       - name: run terraform plan
         run: terraform plan
+        
       - name: run terraform apply
-        if: inputs.apply_changes == TRUE
+        if: ${{ github.event.inputs.apply_changes == 'true' }}
         run: terraform apply -auto-approve
