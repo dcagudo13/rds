@@ -1,26 +1,19 @@
-resource "aws_db_instance" "test-ido_instance" {
-  identifier              = "testido"
-  instance_class          = "db.r5.large"
-  db_subnet_group_name    = aws_db_subnet_group.ido_db.name
-  publicly_accessible     = false
-  engine_version          = "5.7.mysql_aurora.2.11.2" # to be upgraded
+resource "aws_rds_cluster" "test_ido" {
+  cluster_identifier      = "testido-cluster"
   engine                  = "aurora-mysql"
-  db_name                 = "testido"
-  username                = local.db_creds.username
-  password                = local.db_creds.password
+  engine_version          = "5.7.mysql_aurora.2.11.2"
+  db_subnet_group_name    = aws_db_subnet_group.ido_db.name
+  database_name           = "testido"
+  master_username         = local.db_creds.username
+  master_password         = local.db_creds.password
   backup_retention_period = 5
-  backup_window           = "07:00-09:00"
+  preferred_backup_window = "07:00-09:00"
   vpc_security_group_ids  = [aws_security_group.allow_mysql.id]
-  max_allocated_storage   = 100 # based on actual prod RDS instance
-  
-  multi_az = true
-  
-  performance_insights_enabled          = true
-  performance_insights_retention_period = 7 # default
-  
-  monitoring_interval = 60 # interval in seconds
-  monitoring_role_arn = aws_iam_role.em_access.arn
 
+  storage_type              = "io1"
+  allocated_storage         = 100
+  iops                      = 1000
+  db_cluster_instance_class = "db.r5.large"
 
   enabled_cloudwatch_logs_exports = [
     "audit",
@@ -31,9 +24,34 @@ resource "aws_db_instance" "test-ido_instance" {
 
   lifecycle {
     create_before_destroy = true
+    # ignore_changes = [
+    #   engine_version,
+    # ]
   }
 
   # apply_immediately = true
+}
+
+resource "aws_rds_cluster_instance" "test_ido_instance" {
+  count                = 3
+  identifier           = "testido-${count.index}"
+  cluster_identifier   = aws_rds_cluster.test_ido.cluster_identifier
+  instance_class       = "db.r5.large"
+  db_subnet_group_name = aws_db_subnet_group.ido_db.name
+  publicly_accessible  = false
+  engine_version       = aws_rds_cluster.test_ido.engine_version
+  engine               = "aurora-mysql"
+
+  performance_insights_enabled          = true
+  performance_insights_retention_period = 7 # default
+  
+  monitoring_interval = 60 # interval in seconds
+  monitoring_role_arn = aws_iam_role.em_access.arn
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
 }
 
 ################################################################################
