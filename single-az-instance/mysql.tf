@@ -48,10 +48,10 @@ resource "aws_db_subnet_group" "ido_db" {
   subnet_ids = [data.aws_subnet.subnet_id_a.id, data.aws_subnet.subnet_id_b.id]
 }
 
-
-resource "aws_secretsmanager_secret" "ido_secret" {
-  name = "ido_cred"
-}
+# secret has been created manually instead
+# resource "aws_secretsmanager_secret" "ido_secret" {
+#   name = "ido_cred"
+# }
 
 data "aws_secretsmanager_secret_version" "secret" {
   secret_id = "ido_cred"
