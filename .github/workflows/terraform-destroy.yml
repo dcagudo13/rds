@@ -12,7 +12,7 @@ on:
           - single-az-instance
           - multi-az-instance
           - multi-az-db-cluster
-      apply_changes:
+      destroy_all:
         description: 'Destroy all resources in AWS?'
         required: true
         default: FALSE
@@ -35,5 +35,5 @@ jobs:
       - name: run terraform init
         run: terraform init
       - name: run terraform destroy
-        if: inputs.apply_changes == TRUE
+        if: inputs.destroy_all == TRUE
         run: terraform destroy -auto-approve
