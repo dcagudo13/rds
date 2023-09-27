@@ -1,0 +1,9 @@
+name: terraform
+run-name: terraform
+on: 
+  workflow_dispatch
+jobs:
+  terraform-version:
+    runs-on: self-hosted
+    steps:
+      - run: terraform -v
