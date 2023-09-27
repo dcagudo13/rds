@@ -1,6 +1,17 @@
 name: terraform
-on: 
-  workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      rds_deployment:
+        description: 'Choose the RDS deployment option.'
+        required: true
+        default: ''
+        type: choice
+        options:
+          - test-module
+          - single-az-instance
+          - multi-az-instance
+          - multi-az-db-cluster
 env:
 # Credentials for deployment to AWS
  AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY }}
@@ -10,7 +21,7 @@ jobs:
     runs-on: self-hosted
     defaults:
       run:
-        working-directory: ./single-az-instance
+        working-directory: ./${{inputs.rds_deployment}}
     steps:
       - name: version
         run: terraform -v
